@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# My:
+data/other/
+data/n07718472_cucumber.JPEG
+
+old/
+
 # C extensions
 *.so
 
