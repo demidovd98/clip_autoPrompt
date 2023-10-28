@@ -18,7 +18,7 @@ def zeroshot_classifier(model, classnames, templates, test_mode="all_cls", aux=F
             if aux:
                 auxillary.append(texts)
 
-            print(texts[0])
+            #print(texts[0])
 
             texts = clip.tokenize(texts).cuda() #tokenize
             class_embeddings = model.encode_text(texts) #embed with text encoder
@@ -62,14 +62,14 @@ def zeroshot_classifier_our(model, classnames, templates, test_mode="all_cls", a
                 if aux:
                     auxillary.append(texts)
 
-                print(texts[0])
+                #print(texts[0])
 
             except:
                 #texts = classname
-                print("[WARNING] No prompts found for classname:", classname, ", use class name as a prompt instead.")
+                #print("[WARNING] No prompts found for classname:", classname, ", use class name as a prompt instead.")
 
                 texts = classname.split(",")[0] if classname else [classname]
-                print(texts)
+                #print(texts)
 
                 if photo_of:
                     template_photo = get_templates_basic(a_photo_of_a=a_photo_of_a)
@@ -78,7 +78,7 @@ def zeroshot_classifier_our(model, classnames, templates, test_mode="all_cls", a
                 if aux:
                     auxillary.append(texts)
 
-                print(texts[0])
+                #print(texts[0])
 
 
             texts = clip.tokenize(texts).cuda() #tokenize

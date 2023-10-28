@@ -12,6 +12,16 @@ from imagenetv2_pytorch import ImageNetV2Dataset
 
 def get_dataset_imagenet_v1(transform=None, num_classes=1000, templates_type="clip_all", from_source=False):
     
+    ## Original trasnforms from CLIP repo code
+    # print(transforms)
+    # Compose(
+    #     Resize(size=224, interpolation=bicubic, max_size=None, antialias=warn)
+    #     CenterCrop(size=(224, 224))
+    #     <function _convert_image_to_rgb at 0x7f9bfa64db40>
+    #     ToTensor()
+    #     Normalize(mean=(0.48145466, 0.4578275, 0.40821073), std=(0.26862954, 0.26130258, 0.27577711))
+    # )
+
     path = "/l/users/20020067/Datasets/ImageNet1K/ImageNet_2012/"
     split='val' # test ?, train
 

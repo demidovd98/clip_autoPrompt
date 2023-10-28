@@ -25,85 +25,21 @@ def setup(args):
 
     model, transforms = clip.load(args.model_name)
 
-    print("[INFO] Model parameters:", f"{np.sum([int(np.prod(p.shape)) for p in model.parameters()]):,}")
-    print("[INFO] Context length:", model.context_length, ", Vocab size:", model.vocab_size)
+    if not args.silent: print("[INFO] Model parameters:", f"{np.sum([int(np.prod(p.shape)) for p in model.parameters()]):,}")
+    if not args.silent: print("[INFO] Context length:", model.context_length, ", Vocab size:", model.vocab_size)
 
 
     ### Load data:
 
-    # print(transforms)
-    # Compose(
-    #     Resize(size=224, interpolation=bicubic, max_size=None, antialias=warn)
-    #     CenterCrop(size=(224, 224))
-    #     <function _convert_image_to_rgb at 0x7f9bfa64db40>
-    #     ToTensor()
-    #     Normalize(mean=(0.48145466, 0.4578275, 0.40821073), std=(0.26862954, 0.26130258, 0.27577711))
-    # )
-
     images, classes = get_dataset(args.dataset, transform=transforms, 
                                     templates_type=args.templates_type)
-
-
-    '''
-    get_dataset_func = get_dataset(args.dataset)
-
-    # images, classes, templates = get_dataset_func(args.dataset, num_classes=num_classes, 
-    #                                                     transform=transforms, 
-    #                                                     templates=args.templates_type,
-    #                                                     num_classes=num_classes)
-
-    if args.dataset == "imagenet_v1":
-        num_classes=1000
-        images, classes = get_dataset_func(transform=transforms, 
-                                                            templates_type=args.templates_type,
-                                                            num_classes=num_classes)
-        # model.visual.input_resolution = 224
-
-    elif args.dataset == "imagenet_v1_100":
-        num_classes=100
-        images, classes = get_dataset_func(transform=transforms, 
-                                                            templates_type=args.templates_type,
-                                                            num_classes=num_classes)
-        # model.visual.input_resolution = 224
-
-    elif args.dataset == "imagenet_v2":
-        num_classes=1000
-        images, classes = get_dataset_func(transform=transforms, 
-                                                            templates_type=args.templates_type,
-                                                            num_classes=num_classes)
-        # model.visual.input_resolution = 224
-
-    elif args.dataset == "imagenet_v2_100":
-        num_classes=100
-        images, classes = get_dataset_func(transform=transforms, 
-                                                            templates_type=args.templates_type,
-                                                            num_classes=num_classes)
-        # model.visual.input_resolution = 224
-
-    elif args.dataset == "cifar10":
-        num_classes=10
-        images, classes = get_dataset_func(transform=transforms, 
-                                                            templates_type=args.templates_type,
-                                                            num_classes=num_classes)
-        # model.visual.input_resolution = 32 # 224 originally
-
-    elif args.dataset == "cifar100":
-        num_classes=100
-        images, classes = get_dataset_func(transform=transforms, 
-                                                            templates_type=args.templates_type,
-                                                            num_classes=num_classes)
-        # model.visual.input_resolution = 32 # 224 originally
-
-    else:
-        raise Exception("[ERROR] Dataset name is not in the list") 
-    '''
             
 
     test_loader = torch.utils.data.DataLoader(images, batch_size=32,
                                             shuffle=False, num_workers=8) #2)
 
-    print(f"[INFO] Classes number: {len(classes)} ") #, {len(templates)} templates")
-    print("[INFO] Input resolution:", model.visual.input_resolution)
+    if not args.silent: print(f"[INFO] Classes number: {len(classes)} ") #, {len(templates)} templates")
+    if not args.silent: print("[INFO] Input resolution:", model.visual.input_resolution)
 
 
 
@@ -113,7 +49,7 @@ def setup(args):
         templates = get_prompts(file_name="", dataset_name=args.dataset, classes=classes, division=args.prompt_words_num, prompts_num=args.prompts_per_cls)
         zeroshot_weights, auxillary = zeroshot_classifier_our(model, classes, templates, 
                                                             test_mode=args.test_mode, aux=True, 
-                                                            photo_of=True, a_photo_of_a=True)
+                                                            photo_of=True, a_photo_of_a=True) #True)
         #templates = list(templates.values())
         templates_num = sum([len(value) for value in templates.values()])
 
@@ -123,7 +59,7 @@ def setup(args):
                                                         test_mode=args.test_mode, aux=True)
         templates_num = len(templates)        
     elif args.templates_type == "clip_photo":
-        templates = get_templates_basic()
+        templates = get_templates_basic(a_photo_of_a=True) #True)
         zeroshot_weights, auxillary = zeroshot_classifier(model, classes, templates, 
                                                         test_mode=args.test_mode, aux=True)
         templates_num = len(templates)
@@ -136,9 +72,9 @@ def setup(args):
             raise Exception(f"[ERROR] Number of classes in prepared promts {len(auxillary)} \
                             is not the same as number of classes in the dataset {len(classes)}")
 
-    print(f"[INFO] Total prompts number: {templates_num}")
-    print("[INFO] Prompts per class:", len(auxillary[0]))
-    print("[INFO] Classificator shape:", zeroshot_weights.shape)
+    if not args.silent: print(f"[INFO] Total prompts number: {templates_num}")
+    if not args.silent: print("[INFO] Prompts per class:", len(auxillary[0]))
+    if not args.silent: print("[INFO] Classificator shape:", zeroshot_weights.shape)
 
     return model, test_loader, zeroshot_weights
 
@@ -168,7 +104,7 @@ def test(args, model, test_loader, zeroshot_weights, mode='all_cls'):
             images = images.cuda()
             target = target.cuda()
 
-            if mode == 'my_cls_among_all' or mode == 'my_cls_only' :
+            if mode == ('my_cls_among_all') or (mode == 'my_cls_only') :
                 mask = torch.zeros(target.size(), dtype=torch.bool).cuda()
                 for index in imagenet_indices:
                     # print(index)
@@ -275,6 +211,8 @@ def main():
                         default=1,
                         help="Number of words to the left and to the right from the class name in the prompt")
     
+    parser.add_argument('--silent', action='store_true',
+                        help="Whether to print unnecessary details")
 
     #args = parser.parse_known_args()[0]
     args, unknown = parser.parse_known_args()                 

@@ -29,10 +29,10 @@ names = [
 
 ##
 prepare_only = False #False
-DATASET = 'cifar10' # ['cifar10', 'cifar100' 'imagenet']
-NUM_OF_SENTENCES = 1000 # 1, 10, 100, 1000
+DATASET = 'imagenet' # ['cifar10', 'cifar100' 'imagenet']
+NUM_OF_SENTENCES = 10000 # 1, 10, 100, 1000, 10000
 
-DIFFICULTY = 'full' # 'easy', 'mid', 'full'
+DIFFICULTY = 'mid' # 'easy', 'mid', 'full'
 # TODO replace DIFFICULTY with num_classes [12, 100, 1000]
 
 STRICT = True
