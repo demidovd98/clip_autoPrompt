@@ -46,7 +46,7 @@ def setup(args):
     ### Prepare  prompts and classification weights:
 
     if args.templates_type == "our":
-        templates = get_prompts(file_name="", dataset_name=args.dataset, classes=classes, division=args.prompt_words_num, prompts_num=args.prompts_per_cls)
+        templates = get_prompts(file_name="", dataset_name=args.dataset, classes=classes, division=args.prompt_words_num, prompts_num=args.prompts_per_cls, gpt_prompts=args.gpt_prompts)
         zeroshot_weights, auxillary = zeroshot_classifier_our(model, classes, templates, 
                                                             test_mode=args.test_mode, aux=True, 
                                                             photo_of=True, a_photo_of_a=True) #True)
@@ -82,6 +82,8 @@ def setup(args):
 
 def test(args, model, test_loader, zeroshot_weights, mode='all_cls'):
 
+    my_cls_with_all = False # False
+
     if mode == 'my_cls_among_all' or mode == 'my_cls_only' :
         from data.get_dataset import get_indices_imagenet100
         imagenet_indices = get_indices_imagenet100()
@@ -103,23 +105,56 @@ def test(args, model, test_loader, zeroshot_weights, mode='all_cls'):
 
             images = images.cuda()
             target = target.cuda()
+            #print(target)
 
             if mode == ('my_cls_among_all') or (mode == 'my_cls_only') :
                 mask = torch.zeros(target.size(), dtype=torch.bool).cuda()
+                
+                ### my with clip:
+                if my_cls_with_all:
+                    mask_reverse = torch.zeros(target.size(), dtype=torch.bool).cuda()
+                ###
+
                 for index in imagenet_indices:
                     # print(index)
                     # print(target)
                     #result = torch.nonzero(target[:] == imagenet_indices_ours)
                     mask_temp = (target == index)
+                    
+                    #print("mask", mask_temp)
+
+                    ### my with clip:
+                    if my_cls_with_all:
+                        mask_temp_reverse = ~mask_temp #(target != index)
+                        #print("mask rev:", mask_temp_reverse)
+
+                    ###
+
                     #mask += mask_temp
                     #print(mask_temp)
                     #print(mask)
                     mask = torch.add(mask, mask_temp)
                     #print(mask)
 
+                    ### my with clip:
+                    if my_cls_with_all:
+                        mask_reverse = ~mask #torch.add(mask_reverse, mask_temp_reverse)
+                    #print(mask_reverse)
+                    
+                    ###
+
+                    #print(mask)
+
                 target_new = torch.masked_select(target, mask)
+
+                ### my with clip:
+                if my_cls_with_all:
+                    target_new_reverse = torch.masked_select(target, mask_reverse)
+                ###
+
                 #images = torch.masked_select(target, mask)
-                #print(target_new)
+                #print("new:", target_new)
+                #print("new rev:", target_new_reverse)
 
                 if len(target_new) > 0:
                     #print(mask)
@@ -131,33 +166,81 @@ def test(args, model, test_loader, zeroshot_weights, mode='all_cls'):
                     elif mode == 'my_cls_only':
                         target = torch.tensor([labels_to_ids[x.item()] for x in target_new]).cuda()
 
-                    images = images[mask,:]
 
-                    # # predict
-                    # image_features = model.encode_image(images)
-                    # image_features /= image_features.norm(dim=-1, keepdim=True)
-                    # logits = 100. * image_features @ zeroshot_weights
+                    ### my with clip:
+                    if my_cls_with_all:
+                        images_pos = images[mask,:]
 
-                    # # measure accuracy
-                    # acc1, acc5 = accuracy(logits, target, topk=(1, 5))
-                    # top1 += acc1
-                    # top5 += acc5
-                    # n += images.size(0)
+                        # predict
+                        image_features = model.encode_image(images_pos)
+                        image_features /= image_features.norm(dim=-1, keepdim=True)
+                        logits = 100. * image_features @ zeroshot_weights
+
+                        # measure accuracy
+                        acc1, acc5 = accuracy(logits, target, topk=(1, 5))
+                        top1 += acc1
+                        top5 += acc5
+                        n += images_pos.size(0)
+                    ###
+                    else:
+                        images = images[mask,:]
+
+
+                    ### my with clip:
+                    if my_cls_with_all:
+                        #mask_oppsoite = ~mask
+                        #print(mask)
+                        images_reverse = images[mask_reverse,:]
+                        target_reverse = target_new_reverse
+                    ###
+
                 else:
-                    continue 
+                    ### my with clip:
+                    if my_cls_with_all:
+                        pass
+                    ###
+                    else:
+                        continue
 
             # else:
             # predict
-            image_features = model.encode_image(images)
-            image_features /= image_features.norm(dim=-1, keepdim=True)
-            logits = 100. * image_features @ zeroshot_weights
+            if my_cls_with_all:
+                if 0 < len(target_new) < 32:
+                    image_features = model.encode_image(images_reverse)
+                elif len(target_new) >= 32:
+                    continue
+                else:
+                    image_features = model.encode_image(images)
+                image_features /= image_features.norm(dim=-1, keepdim=True)
+                logits = 100. * image_features @ zeroshot_weights
+
+
+            else:
+                image_features = model.encode_image(images)
+                image_features /= image_features.norm(dim=-1, keepdim=True)
+                logits = 100. * image_features @ zeroshot_weights
 
             # measure accuracy
-            acc1, acc5 = accuracy(logits, target, topk=(1, 5))
+            if my_cls_with_all:
+                if len(target_new) > 0:
+                    acc1, acc5 = accuracy(logits, target_reverse, topk=(1, 5))
+                else:
+                    acc1, acc5 = accuracy(logits, target, topk=(1, 5))
+            else:
+                acc1, acc5 = accuracy(logits, target, topk=(1, 5))
+                
             top1 += acc1
             top5 += acc5
-            n += images.size(0)
 
+            if my_cls_with_all:
+                if len(target_new) > 0:
+                    n += images_reverse.size(0)
+                else:
+                    n += images.size(0)
+            else:
+                n += images.size(0)
+
+    print("n_size:", n)
     top1 = (top1 / n) * 100
     top5 = (top5 / n) * 100
 
@@ -211,8 +294,14 @@ def main():
                         default=1,
                         help="Number of words to the left and to the right from the class name in the prompt")
     
+    parser.add_argument('--gpt_prompts', action='store_true',
+                        help="Whether to use prompts from GPT")
+
     parser.add_argument('--silent', action='store_true',
                         help="Whether to print unnecessary details")
+
+
+
 
     #args = parser.parse_known_args()[0]
     args, unknown = parser.parse_known_args()                 

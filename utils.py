@@ -39,6 +39,9 @@ def zeroshot_classifier_our(model, classnames, templates, test_mode="all_cls", a
     if aux:
         auxillary = []
 
+    from data.get_dataset import get_templates_imagenet
+
+
     if test_mode == 'my_cls_among_all':
         from data.get_dataset import get_classes_imagenet
         classnames = get_classes_imagenet(num_classes=1000, multi_name=True, as_dict=False)
@@ -52,34 +55,30 @@ def zeroshot_classifier_our(model, classnames, templates, test_mode="all_cls", a
             try:
                 #texts = list(dictionary_df[classname].values()) #format with class
                 texts = templates[classname] # format with class
-
                 #print(texts[0])
 
                 if photo_of:
                     template_photo = get_templates_basic(a_photo_of_a=a_photo_of_a)
                     texts = [template.format(text) for text in texts for template in template_photo] #format with class
-
-                if aux:
-                    auxillary.append(texts)
-
-                #print(texts[0])
+                print(texts[0])
 
             except:
                 #texts = classname
-                #print("[WARNING] No prompts found for classname:", classname, ", use class name as a prompt instead.")
+                print("[WARNING] No prompts found for classname:", classname, ", use class name as a prompt instead.")
 
                 texts = classname.split(",")[0] if classname else [classname]
                 #print(texts)
 
                 if photo_of:
                     template_photo = get_templates_basic(a_photo_of_a=a_photo_of_a)
+                    #template_photo = get_templates_imagenet()
+
                     texts = [template.format(texts) for template in template_photo] #format with class
 
-                if aux:
-                    auxillary.append(texts)
+            if aux:
+                auxillary.append(texts)
 
-                #print(texts[0])
-
+            #print(texts[0])
 
             texts = clip.tokenize(texts).cuda() #tokenize
             #print(texts[0])

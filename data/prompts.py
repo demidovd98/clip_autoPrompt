@@ -29,10 +29,13 @@ names = [
 
 ##
 prepare_only = False #False
-DATASET = 'imagenet' # ['cifar10', 'cifar100' 'imagenet']
-NUM_OF_SENTENCES = 10000 # 1, 10, 100, 1000, 10000
+prepare_only_folder = '/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/'  #None #''
+file_name_tsv = 'cifar10_p1000.tsv' #None # ''
 
-DIFFICULTY = 'mid' # 'easy', 'mid', 'full'
+DATASET = 'cifar10' # ['cifar10', 'cifar100' 'imagenet']
+NUM_OF_SENTENCES = 1000 # 1, 10, 100, 1000, 10000
+
+DIFFICULTY = 'full' # 'easy', 'mid', 'full'
 # TODO replace DIFFICULTY with num_classes [12, 100, 1000]
 
 STRICT = True
@@ -1329,15 +1332,19 @@ folder = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts
 
 
 if prepare_only:
-    rand = 1697543234 #1697549557 # specify specific rand
 
-    folder = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/" \
-                    + str(DATASET) + "_cls" + str(len(classes)) + "_" + str(rand)
+    if prepare_only_folder is not None:
+        rand=None
+        folder = prepare_only_folder
+    else:
+        rand = 1697543234 #1697549557 # specify specific rand
+        folder = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/" \
+                        + str(DATASET) + "_cls" + str(len(classes)) + "_" + str(rand)
 
     for division_item in DIVISION:
         prepare_prompts(dataset=DATASET, folder=folder, classes=classes, difficulty=DIFFICULTY, numb_of_sent=NUM_OF_SENTENCES, 
-                            rand=rand, division=division_item, plurals=PLURALS, strict=STRICT, strict_symb=STRICT_SYMB, 
-                            options=OPTIONS, one_class=False, old=False)
+                            division=division_item, plurals=PLURALS, strict=STRICT, strict_symb=STRICT_SYMB, 
+                            options=OPTIONS, one_class=False, old=False, prepare_only=prepare_only, file_name_tsv=file_name_tsv, rand=rand)
 
 else:
     search_prompts(dataset=DATASET, folder=folder, classes=classes, difficulty=DIFFICULTY, numb_of_sent=NUM_OF_SENTENCES, 
@@ -1345,8 +1352,8 @@ else:
 
     for division_item in DIVISION:
         prepare_prompts(dataset=DATASET, folder=folder, classes=classes, difficulty=DIFFICULTY, numb_of_sent=NUM_OF_SENTENCES, 
-                            rand=epoch_time, division=division_item, plurals=PLURALS, strict=STRICT, strict_symb=STRICT_SYMB, 
-                            options=OPTIONS, one_class=False, old=False)
+                            division=division_item, plurals=PLURALS, strict=STRICT, strict_symb=STRICT_SYMB, 
+                            options=OPTIONS, one_class=False, old=False, prepare_only=prepare_only, file_name_tsv=file_name_tsv, rand=epoch_time)
 
 
 

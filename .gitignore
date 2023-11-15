@@ -4,9 +4,8 @@ __pycache__/
 *$py.class
 
 # My:
-data/other/
 data/n07718472_cucumber.JPEG
-prompts_our/
+data/prompts_our/
 old/
 
 # C extensions

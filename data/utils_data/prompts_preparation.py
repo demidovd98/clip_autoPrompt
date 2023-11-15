@@ -1215,7 +1215,7 @@ else:
 
 
 
-def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, rand, division, plurals, strict=True, strict_symb=10, options=True, one_class=False, old=False):
+def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, division, plurals, strict=True, strict_symb=10, options=True, one_class=False, old=False, prepare_only=False, file_name_tsv=None, rand=None):
 
     DATASET = dataset # ['cifar10', 'imagenet']
     NUM_OF_SENTENCES = numb_of_sent # 1, 10, 100, 1000
@@ -1230,6 +1230,7 @@ def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, rand, di
     ONE_CLASS = one_class # False ## want True, but False is better so far
     # NEED FIX: when separating all classes to single words then same words may be in the foreign list (sea lion , lion) 
 
+    PREPARE_ONLY = prepare_only
 
     # if dataset == 'cifar10':
     #     plurals = ['s', 's', 's']
@@ -1251,6 +1252,7 @@ def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, rand, di
     classes_temp = classes
 
 
+
     folder = folder #"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/" + str(DATASET) + "_" + str(RAND)
     folder_prompts = folder + "/prompts"
 
@@ -1263,14 +1265,17 @@ def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, rand, di
 
     for hyponym in tqdm(classes_temp):
 
-
         if OLD:
             path = "/l/users/20020067/Datasets/UMBC_corpus/imagenet_sentences_easy_sent1000_rand1678705786.tsv"
             # 100: "/l/users/20020067/Datasets/UMBC_corpus/imagenet_sentences_easy_sent100_rand1678543337.tsv"
             # 1000: "/l/users/20020067/Datasets/UMBC_corpus/imagenet_sentences_easy_sent1000_rand1678705786.tsv"
         else:
-            path = folder + "/sentences_" \
-                        + str(DIFFICULTY) + "_sent" + str(NUM_OF_SENTENCES) + "_hyponyM" + str(hyponym) + "_rand" + str(RAND) + ".tsv"
+            if PREPARE_ONLY:
+                path = folder + file_name_tsv
+                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar10_p1000.tsv"
+            else:
+                path = folder + "/sentences_" \
+                            + str(DIFFICULTY) + "_sent" + str(NUM_OF_SENTENCES) + "_hyponyM" + str(hyponym) + "_rand" + str(RAND) + ".tsv"
 
 
         #with open("/l/users/20020067/Datasets/UMBC_corpus/imagenet_sentences_" + str(DIFFICULTY) + "_sent" + str(NUM_OF_SENTENCES) + "_rand" + str(RAND) + ".tsv", "r") as input:
@@ -1280,11 +1285,39 @@ def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, rand, di
                     "/prompts_" + str(DIFFICULTY) + "_" + "sent" + str(NUM_OF_SENTENCES) + "_" + str(DIVISION) + "_rand" + str(epoch_time) + ".tsv", "a") as output:
 
 
-                    lines = [line for line in input]
-                    
-                    classes = [line.split('\t')[0] for line in lines]
+                    if PREPARE_ONLY:
+                        lines = []
+                        for line in input:
+                            try:
+                                if (line.split('\t')[0] == hyponym):
+                                    lines.append(line)
+                            except:
+                                print(f"[WARNING] Line for {hyponym} was not recognised: {line}")
+                    else:
+                        lines = [line for line in input]
 
-                    paragraphs = [line.split('\t')[1] for line in lines]
+
+                    if PREPARE_ONLY:
+                        classes = []
+                        for line in lines:
+                            try:
+                                classes.append(line.split('\t')[0])
+                            except:
+                                print(f"[WARNING] Classname for {hyponym} was not recognised: {line}")
+                    else:
+                        classes = [line.split('\t')[0] for line in lines]
+
+
+                    if PREPARE_ONLY:
+                        paragraphs = []
+                        for line in lines:
+                            try:
+                                paragraphs.append(line.split('\t')[1])
+                            except:
+                                print(f"[WARNING] Prompt for {hyponym} was not recognised: {line}")
+                    else:
+                        paragraphs = [line.split('\t')[1] for line in lines]
+
 
                     #print(classes[0])
                     #print(paragraphs[0])

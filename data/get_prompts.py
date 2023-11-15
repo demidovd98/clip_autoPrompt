@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 
-def get_prompts(file_name, dataset_name, classes, division, prompts_num): #, strict=True, options=True):
+def get_prompts(file_name, dataset_name, classes, division, prompts_num, gpt_prompts): #, strict=True, options=True):
 
     root = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/"
 
@@ -26,6 +26,8 @@ def get_prompts(file_name, dataset_name, classes, division, prompts_num): #, str
     #PROMPTS_NUMBER = 100 # 1000, 100
     #NUM_OF_SENTENCES = numb_of_sent # 1, 10, 100, 1000
 
+    gpt_prompts = gpt_prompts
+
     '''
     strict = strict
     #STRICT = True
@@ -47,59 +49,82 @@ def get_prompts(file_name, dataset_name, classes, division, prompts_num): #, str
 
     if dataset_name == "cifar10":
         if prompts_num == 1:
-            path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1_1698265068/prompts/prompts_full_sent1_1words_rand1698265066.tsv"
+            if not gpt_prompts:         
+                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1_1698265068/prompts/prompts_full_sent1_1words_rand1698265066.tsv"
         elif prompts_num == 10:
-            path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p10_1698265107/prompts/prompts_full_sent10_1words_rand1698265105.tsv"
+            if not gpt_prompts:         
+                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p10_1698265107/prompts/prompts_full_sent10_1words_rand1698265105.tsv"
             #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p10_1698265107/prompts/prompts_full_sent10_2words_rand1698265105.tsv"
         elif prompts_num == 100:
-            path =  "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p100_1698265134/prompts/prompts_full_sent100_1words_rand1698265132.tsv"
-            #path =  "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p100_1698265134/prompts/prompts_full_sent100_2words_rand1698265132.tsv"
+            if not gpt_prompts:         
+                path =  f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p100_1698265134/prompts/prompts_full_sent100_{division}words_rand1698265132.tsv"
+                #path =  "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p100_1698265134/prompts/prompts_full_sent100_1words_rand1698265132.tsv"
+                #path =  "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p100_1698265134/prompts/prompts_full_sent100_2words_rand1698265132.tsv"
         elif prompts_num == 1000:
-            path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1000_1698265205/prompts/prompts_full_sent1000_{division}words_rand1698265203.tsv"
-            #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1000_1698265205/prompts/prompts_full_sent1000_1words_rand1698265203.tsv"
-            #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1000_1698265205/prompts/prompts_full_sent1000_2words_rand1698265203.tsv"
+            if not gpt_prompts:
+                ## Search:
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1000_1698265205/prompts/prompts_full_sent1000_{division}words_rand1698265203.tsv"
+                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1000_1698265205/prompts/prompts_full_sent1000_1words_rand1698265203.tsv"
+                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1000_1698265205/prompts/prompts_full_sent1000_2words_rand1698265203.tsv"
+            else:
+                ## GPT:
+                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/imagenet_prompts.tsv"
+                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar10_cls10_1697543234/prompts/prompts_full_sent1000_1words_rand1700074422.tsv"
+                #path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar10_cls10_1697543234/prompts/prompts_full_sent1000_{division}words_rand1700074422.tsv"
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/prompts/prompts_full_sent1000_{division}words_rand1700076792.tsv"
         # elif prompts_num == 10000:
 
     elif dataset_name == "cifar100":
         if prompts_num == 1:
-            path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_1697655609 (1p)/prompts/prompts_full_sent1_1words_rand1697655609.tsv"
+            if not gpt_prompts:
+                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_1697655609 (1p)/prompts/prompts_full_sent1_1words_rand1697655609.tsv"
         elif prompts_num == 10:
-            path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_1697659502 (10p)/prompts/prompts_full_sent10_1words_rand1697659502.tsv"
+            if not gpt_prompts:
+                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_1697659502 (10p)/prompts/prompts_full_sent10_1words_rand1697659502.tsv"
         elif prompts_num == 100:
-            path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p100_1697661000 (100p)/prompts/prompts_full_sent100_1words_rand1697661000.tsv"
-            #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p100_1697661000 (100p)/prompts/prompts_full_sent100_2words_rand1697661000.tsv"
+            if not gpt_prompts:
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p100_1697661000 (100p)/prompts/prompts_full_sent100_{division}words_rand1697661000.tsv"
+                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p100_1697661000 (100p)/prompts/prompts_full_sent100_1words_rand1697661000.tsv"
+                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p100_1697661000 (100p)/prompts/prompts_full_sent100_2words_rand1697661000.tsv"
         elif prompts_num == 1000:
-            path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p1000_1697743745 (1000p)/prompts/prompts_full_sent1000_{division}words_rand1697743745.tsv"
-            #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p1000_1697743745 (1000p)/prompts/prompts_full_sent1000_1words_rand1697743745.tsv"
-            #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p1000_1697743745 (1000p)/prompts/prompts_full_sent1000_2words_rand1697743745.tsv"
+            if not gpt_prompts:
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p1000_1697743745 (1000p)/prompts/prompts_full_sent1000_{division}words_rand1697743745.tsv"
+                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p1000_1697743745 (1000p)/prompts/prompts_full_sent1000_1words_rand1697743745.tsv"
+                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p1000_1697743745 (1000p)/prompts/prompts_full_sent1000_2words_rand1697743745.tsv"
         # elif prompts_num == 10000:
 
     elif dataset_name[0:8] == "imagenet":
         if (dataset_name == "imagenet_v2_100") or (dataset_name == "imagenet_v1_100"):
             if prompts_num == 1:
-                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697538250 (1p)/prompts/prompts_mid_sent1_1words_rand1697538250.tsv"
+                if not gpt_prompts:
+                    path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697538250 (1p)/prompts/prompts_mid_sent1_1words_rand1697538250.tsv"
             elif prompts_num == 10:
-                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697537792 (10p)/prompts/prompts_mid_sent10_1words_rand1697537792.tsv"
+                if not gpt_prompts:
+                    path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697537792 (10p)/prompts/prompts_mid_sent10_1words_rand1697537792.tsv"
             elif prompts_num == 100:
-                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697476227 (100p)/prompts/prompts_mid_sent100_{division}words_rand1697476227.tsv"
-                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697476227 (100p)/prompts/prompts_mid_sent100_1words_rand1697476227.tsv"
-                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697476227 (100p)/prompts/prompts_mid_sent100_2words_rand1697476227.tsv"
+                if not gpt_prompts:
+                    path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697476227 (100p)/prompts/prompts_mid_sent100_{division}words_rand1697476227.tsv"
+                    #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697476227 (100p)/prompts/prompts_mid_sent100_1words_rand1697476227.tsv"
+                    #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697476227 (100p)/prompts/prompts_mid_sent100_2words_rand1697476227.tsv"
             elif prompts_num == 1000:
-                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697491561 (1000p)/prompts/prompts_mid_sent1000_{division}words_rand1697491561.tsv"
-                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697491561 (1000p)/prompts/prompts_mid_sent1000_1words_rand1697491561.tsv"
-                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697491561 (1000p)/prompts/prompts_mid_sent1000_2words_rand1697491561.tsv"
-                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697491561 (1000p)/prompts/prompts_mid_sent1000_3words_rand1697491561.tsv"
+                if not gpt_prompts:
+                    path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697491561 (1000p)/prompts/prompts_mid_sent1000_{division}words_rand1697491561.tsv"
+                    #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697491561 (1000p)/prompts/prompts_mid_sent1000_1words_rand1697491561.tsv"
+                    #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697491561 (1000p)/prompts/prompts_mid_sent1000_2words_rand1697491561.tsv"
+                    #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697491561 (1000p)/prompts/prompts_mid_sent1000_3words_rand1697491561.tsv"
             # elif prompts_num == 10000:
 
         else:
             if prompts_num == 1:
-                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_{division}words_rand1697642394.tsv"
-                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_1words_rand1697642394.tsv"
-                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_2words_rand1697642394.tsv"
+                if not gpt_prompts:
+                    path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_{division}words_rand1697642394.tsv"
+                    #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_1words_rand1697642394.tsv"
+                    #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_2words_rand1697642394.tsv"
             elif prompts_num == 10:
-                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697549557 (10p)/prompts/prompts_full_sent10_{division}words_rand1697642268.tsv"
-                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697549557 (10p)/prompts/prompts_full_sent10_1words_rand1697642268.tsv"
-                #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697549557 (10p)/prompts/prompts_full_sent10_2words_rand1697642268.tsv"
+                if not gpt_prompts:
+                    path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697549557 (10p)/prompts/prompts_full_sent10_{division}words_rand1697642268.tsv"
+                    #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697549557 (10p)/prompts/prompts_full_sent10_1words_rand1697642268.tsv"
+                    #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697549557 (10p)/prompts/prompts_full_sent10_2words_rand1697642268.tsv"
             elif prompts_num == 100:
                 raise Exception(f"[ERROR] Prompts for dataset {dataset_name} with number of prompts {prompts_num} are not added yet")
             elif prompts_num == 1000:
