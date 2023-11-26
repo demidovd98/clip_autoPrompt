@@ -1,5 +1,6 @@
 # clip_autoPrompt
 
+Prepared prompts are available [here](https://mbzuaiac-my.sharepoint.com/:f:/g/personal/dmitry_demidov_mbzuai_ac_ae/EpL23LyTYdBHhSzCO1C1s5ABeoEdPxeKjyuxQhtHiN6aKw?e=Lb2id6).
 
 ## Setup environment:
 ```bash
