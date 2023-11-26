@@ -50,10 +50,10 @@ def get_prompts(file_name, dataset_name, classes, division, prompts_num, gpt_pro
     if dataset_name == "cifar10":
         if prompts_num == 1:
             if not gpt_prompts:         
-                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1_1698265068/prompts/prompts_full_sent1_1words_rand1698265066.tsv"
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p1_1698265068/prompts/prompts_full_sent1_{division}words_rand1698265066.tsv"
         elif prompts_num == 10:
             if not gpt_prompts:         
-                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p10_1698265107/prompts/prompts_full_sent10_1words_rand1698265105.tsv"
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p10_1698265107/prompts/prompts_full_sent10_{division}words_rand1698265105.tsv"
             #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar10_cls10_p10_1698265107/prompts/prompts_full_sent10_2words_rand1698265105.tsv"
         elif prompts_num == 100:
             if not gpt_prompts:         
@@ -71,16 +71,23 @@ def get_prompts(file_name, dataset_name, classes, division, prompts_num, gpt_pro
                 #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/imagenet_prompts.tsv"
                 #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar10_cls10_1697543234/prompts/prompts_full_sent1000_1words_rand1700074422.tsv"
                 #path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar10_cls10_1697543234/prompts/prompts_full_sent1000_{division}words_rand1700074422.tsv"
-                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/prompts/prompts_full_sent1000_{division}words_rand1700076792.tsv"
+                
+                # first:
+                # path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/prompts/prompts_full_sent1000_{division}words_rand1700076792.tsv"
+                
+                # new:
+                #path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar10_p1000_new/prompts/prompts_full_sent1000_{division}words_rand1700508616.tsv"
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar10_p1000_new/prompts/prompts_full_sent1000_{division}words_rand1700850333.tsv"
+
         # elif prompts_num == 10000:
 
     elif dataset_name == "cifar100":
         if prompts_num == 1:
             if not gpt_prompts:
-                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_1697655609 (1p)/prompts/prompts_full_sent1_1words_rand1697655609.tsv"
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_1697655609 (1p)/prompts/prompts_full_sent1_{division}words_rand1697655609.tsv"
         elif prompts_num == 10:
             if not gpt_prompts:
-                path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_1697659502 (10p)/prompts/prompts_full_sent10_1words_rand1697659502.tsv"
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_1697659502 (10p)/prompts/prompts_full_sent10_{division}words_rand1697659502.tsv"
         elif prompts_num == 100:
             if not gpt_prompts:
                 path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p100_1697661000 (100p)/prompts/prompts_full_sent100_{division}words_rand1697661000.tsv"
@@ -91,21 +98,30 @@ def get_prompts(file_name, dataset_name, classes, division, prompts_num, gpt_pro
                 path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p1000_1697743745 (1000p)/prompts/prompts_full_sent1000_{division}words_rand1697743745.tsv"
                 #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p1000_1697743745 (1000p)/prompts/prompts_full_sent1000_1words_rand1697743745.tsv"
                 #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/cifar100_cls100_p1000_1697743745 (1000p)/prompts/prompts_full_sent1000_2words_rand1697743745.tsv"
+            else:
+                ## GPT:
+                #path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar100_p200/prompts/prompts_full_sent1000_{division}words_rand1700740649.tsv"
+                path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar100_p200/prompts/prompts_full_sent1000_{division}words_rand1700850367.tsv"
+
         # elif prompts_num == 10000:
 
     elif dataset_name[0:8] == "imagenet":
         if (dataset_name == "imagenet_v2_100") or (dataset_name == "imagenet_v1_100"):
             if prompts_num == 1:
                 if not gpt_prompts:
-                    path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697538250 (1p)/prompts/prompts_mid_sent1_1words_rand1697538250.tsv"
+                    path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697538250 (1p)/prompts/prompts_mid_sent1_{division}words_rand1697538250.tsv"
             elif prompts_num == 10:
                 if not gpt_prompts:
-                    path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697537792 (10p)/prompts/prompts_mid_sent10_1words_rand1697537792.tsv"
+                    path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697537792 (10p)/prompts/prompts_mid_sent10_{division}words_rand1697537792.tsv"
             elif prompts_num == 100:
                 if not gpt_prompts:
                     path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697476227 (100p)/prompts/prompts_mid_sent100_{division}words_rand1697476227.tsv"
                     #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697476227 (100p)/prompts/prompts_mid_sent100_1words_rand1697476227.tsv"
                     #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697476227 (100p)/prompts/prompts_mid_sent100_2words_rand1697476227.tsv"
+                else:
+                    ## GPT:
+                    path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/imagenet100_p100/prompts/prompts_mid_sent100_{division}words_rand1700848749.tsv"
+
             elif prompts_num == 1000:
                 if not gpt_prompts:
                     path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet100_1697491561 (1000p)/prompts/prompts_mid_sent1000_{division}words_rand1697491561.tsv"
@@ -117,7 +133,7 @@ def get_prompts(file_name, dataset_name, classes, division, prompts_num, gpt_pro
         else:
             if prompts_num == 1:
                 if not gpt_prompts:
-                    path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_{division}words_rand1697642394.tsv"
+                    path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_{division}words_rand1697642394.tsv"
                     #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_1words_rand1697642394.tsv"
                     #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697543234 (1p)/prompts/prompts_full_sent1_2words_rand1697642394.tsv"
             elif prompts_num == 10:
@@ -125,6 +141,11 @@ def get_prompts(file_name, dataset_name, classes, division, prompts_num, gpt_pro
                     path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697549557 (10p)/prompts/prompts_full_sent10_{division}words_rand1697642268.tsv"
                     #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697549557 (10p)/prompts/prompts_full_sent10_1words_rand1697642268.tsv"
                     #path = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/imagenet_cls1000_1697549557 (10p)/prompts/prompts_full_sent10_2words_rand1697642268.tsv"
+                else:
+                    ## GPT:
+                    #path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/imagenet1000_p10/prompts/prompts_full_sent10_{division}words_rand1700846931.tsv"
+                    path = f"/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/imagenet1000_p10/prompts/prompts_full_sent10_{division}words_rand1700847557.tsv"
+
             elif prompts_num == 100:
                 raise Exception(f"[ERROR] Prompts for dataset {dataset_name} with number of prompts {prompts_num} are not added yet")
             elif prompts_num == 1000:

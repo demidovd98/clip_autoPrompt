@@ -14,10 +14,16 @@ source /home/dmitry.demidov/anaconda3/bin/activate clip_colab
 
 
 ## Run:
-# Classify with Search prompts:
+# Classify with all CLIP prompts:
+python3 -W ignore main.py --dataset cifar10 --test_mode all_cls --templates_type clip_all --silent
+
+# Classify with "a photo of {class}" prompts:
+python3 -W ignore main.py --dataset cifar10 --test_mode all_cls --templates_type clip_photo --silent
+
+# Classify with our Search prompts:
 python3 -W ignore main.py --dataset cifar10 --test_mode all_cls --templates_type our --prompts_per_cls 1000 --prompt_words_num 1 --silent
 
-# Classify with GPT prompts:
+# Classify with our GPT prompts:
 python3 -W ignore main.py --dataset cifar10 --test_mode all_cls --templates_type our --prompts_per_cls 1000 --prompt_words_num 1 --silent --gpt_prompts
 
 

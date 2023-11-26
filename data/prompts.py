@@ -28,11 +28,21 @@ names = [
 '''
 
 ##
-prepare_only = False #False
-prepare_only_folder = '/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/'  #None #''
-file_name_tsv = 'cifar10_p1000.tsv' #None # ''
+prepare_only = False # False
 
-DATASET = 'cifar10' # ['cifar10', 'cifar100' 'imagenet']
+#prepare_only_folder = '/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar10_p1000_new/'  #None #''
+prepare_only_folder = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/cifar100_p200/"
+#prepare_only_folder = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/imagenet100_p100/"
+#prepare_only_folder = "/l/users/20020067/Activities/CLIP_prompts/clip_autoPrompt/data/prompts_our/_good/_gpt/anas/imagenet1000_p10/"
+
+#file_name_tsv = 'cifar10_p1000.tsv' #None # ''
+#file_name_tsv = 'cifar10_p1000_new.tsv'
+file_name_tsv = 'cifar100.tsv'
+#file_name_tsv = 'imagenet100_prompts.tsv'
+#file_name_tsv = 'imagenet1000_10prompts.tsv'
+
+
+DATASET = 'cifar100' # ['cifar10', 'cifar100' 'imagenet']
 NUM_OF_SENTENCES = 1000 # 1, 10, 100, 1000, 10000
 
 DIFFICULTY = 'full' # 'easy', 'mid', 'full'
@@ -1313,7 +1323,11 @@ elif DATASET == 'imagenet':
     if DIFFICULTY == 'easy':
         classes = get_classes_imagenet(num_classes=12)
     elif DIFFICULTY == 'mid':
+        # if prepare_only:
+        #     classes = get_classes_imagenet(num_classes=100, multi_name=True)            
+        # else:
         classes = get_classes_imagenet(num_classes=100)
+        #print(classes)
     elif DIFFICULTY == 'full':
         classes = get_classes_imagenet(num_classes=1000)
     else:

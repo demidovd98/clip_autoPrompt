@@ -1291,6 +1291,7 @@ def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, division
                             try:
                                 if (line.split('\t')[0] == hyponym):
                                     lines.append(line)
+                                    #print(hyponym, line)
                             except:
                                 print(f"[WARNING] Line for {hyponym} was not recognised: {line}")
                     else:
@@ -1306,12 +1307,13 @@ def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, division
                                 print(f"[WARNING] Classname for {hyponym} was not recognised: {line}")
                     else:
                         classes = [line.split('\t')[0] for line in lines]
-
+                    #print(classes)
 
                     if PREPARE_ONLY:
                         paragraphs = []
                         for line in lines:
                             try:
+                                line = line.replace(".", " . ")
                                 paragraphs.append(line.split('\t')[1])
                             except:
                                 print(f"[WARNING] Prompt for {hyponym} was not recognised: {line}")
@@ -1331,6 +1333,8 @@ def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, division
 
                         for sent_temp in sentences:
 
+                            sent_temp = sent_temp.lower()
+
                             if ONE_CLASS:
                                 classes_mid_100_list_all = []
                                 
@@ -1349,6 +1353,8 @@ def prepare_prompts(dataset, folder, classes, difficulty, numb_of_sent, division
                                 classes_list = classes[idx].split(", ")
                             else:
                                 classes_list = [classes[idx]]
+                            
+                            #print(classes_list)
 
                             for classes_item in classes_list:
                                 #print(classes_item)

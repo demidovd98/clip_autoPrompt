@@ -25,18 +25,35 @@ def setup(args):
 
     model, transforms = clip.load(args.model_name)
 
+    model.cuda()
+
     if not args.silent: print("[INFO] Model parameters:", f"{np.sum([int(np.prod(p.shape)) for p in model.parameters()]):,}")
     if not args.silent: print("[INFO] Context length:", model.context_length, ", Vocab size:", model.vocab_size)
 
 
     ### Load data:
 
-    images, classes = get_dataset(args.dataset, transform=transforms, 
-                                    templates_type=args.templates_type)
+    if args.refine_by_score: # == "our_refined": # for cifar10 and cifar100
+        images, classes, train_set = get_dataset(args.dataset, transform=transforms, 
+                                        templates_type=args.templates_type,
+                                        get_trainSet=True)
+        if train_set is None: # temp solution
+            train_set=images # use val dataset
+
+    else:
+        images, classes = get_dataset(args.dataset, transform=transforms, 
+                                        templates_type=args.templates_type,
+                                        get_trainSet=False)
             
 
     test_loader = torch.utils.data.DataLoader(images, batch_size=32,
                                             shuffle=False, num_workers=8) #2)
+
+    if args.refine_by_score: # == "our_refined": # for cifar10 and cifar100
+        train_loader = torch.utils.data.DataLoader(train_set, batch_size=32,
+                                                shuffle=False, num_workers=8) #2)
+    else:
+        train_loader = None
 
     if not args.silent: print(f"[INFO] Classes number: {len(classes)} ") #, {len(templates)} templates")
     if not args.silent: print("[INFO] Input resolution:", model.visual.input_resolution)
@@ -47,21 +64,28 @@ def setup(args):
 
     if args.templates_type == "our":
         templates = get_prompts(file_name="", dataset_name=args.dataset, classes=classes, division=args.prompt_words_num, prompts_num=args.prompts_per_cls, gpt_prompts=args.gpt_prompts)
-        zeroshot_weights, auxillary = zeroshot_classifier_our(model, classes, templates, 
+        zeroshot_weights, auxillary = zeroshot_classifier_our(args, model, classes, templates, 
                                                             test_mode=args.test_mode, aux=True, 
-                                                            photo_of=True, a_photo_of_a=True) #True)
+                                                            photo_of=True, a_photo_of_a=True, #True)
+                                                            gpt_prompts=args.gpt_prompts,
+                                                            refine_by_score=args.refine_by_score,
+                                                            train_loader=train_loader)
         #templates = list(templates.values())
         templates_num = sum([len(value) for value in templates.values()])
 
     elif args.templates_type == "clip_all":
         templates = get_templates(args.dataset)
-        zeroshot_weights, auxillary = zeroshot_classifier(model, classes, templates, 
-                                                        test_mode=args.test_mode, aux=True)
+        zeroshot_weights, auxillary = zeroshot_classifier(args, model, classes, templates, 
+                                                        test_mode=args.test_mode, aux=True,
+                                                        refine_by_score=args.refine_by_score,
+                                                        train_loader=train_loader)
         templates_num = len(templates)        
     elif args.templates_type == "clip_photo":
         templates = get_templates_basic(a_photo_of_a=True) #True)
-        zeroshot_weights, auxillary = zeroshot_classifier(model, classes, templates, 
-                                                        test_mode=args.test_mode, aux=True)
+        zeroshot_weights, auxillary = zeroshot_classifier(args, model, classes, templates, 
+                                                        test_mode=args.test_mode, aux=True,
+                                                        refine_by_score=args.refine_by_score,
+                                                        train_loader=train_loader)                                                        
         templates_num = len(templates)
 
     #print(auxillary)
@@ -299,6 +323,10 @@ def main():
 
     parser.add_argument('--silent', action='store_true',
                         help="Whether to print unnecessary details")
+
+
+    parser.add_argument('--refine_by_score', action='store_true',
+                        help="Whether to refine prompts with similarity score check")
 
 
 
